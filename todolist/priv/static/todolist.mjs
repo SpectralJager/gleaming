@@ -1583,6 +1583,9 @@ function on(name, handler) {
 function class$(name) {
   return attribute("class", name);
 }
+function id(name) {
+  return attribute("id", name);
+}
 function type_(name) {
   return attribute("type", name);
 }
@@ -1591,6 +1594,9 @@ function value(val) {
 }
 function placeholder(text3) {
   return attribute("placeholder", text3);
+}
+function src(uri) {
+  return attribute("src", uri);
 }
 
 // build/dev/javascript/lustre/lustre/element.mjs
@@ -2333,6 +2339,9 @@ function hr(attrs) {
 function span(attrs, children2) {
   return element("span", attrs, children2);
 }
+function script(attrs, js) {
+  return element("script", attrs, toList([text2(js)]));
+}
 function button(attrs, children2) {
   return element("button", attrs, children2);
 }
@@ -2388,9 +2397,9 @@ var AppState = class extends CustomType {
   }
 };
 var Todo = class extends CustomType {
-  constructor(id, msg, status) {
+  constructor(id2, msg, status) {
     super();
-    this.id = id;
+    this.id = id2;
     this.msg = msg;
     this.status = status;
   }
@@ -2412,15 +2421,15 @@ var AddTodo = class extends CustomType {
   }
 };
 var RemoveTodo = class extends CustomType {
-  constructor(id) {
+  constructor(id2) {
     super();
-    this.id = id;
+    this.id = id2;
   }
 };
 var ToggleTodo = class extends CustomType {
-  constructor(id) {
+  constructor(id2) {
     super();
-    this.id = id;
+    this.id = id2;
   }
 };
 function init2(_) {
@@ -2449,23 +2458,23 @@ function update(state, msg) {
       return [state.withFields({ input: text3 }), none()];
     }
   } else if (msg instanceof RemoveTodo) {
-    let id = msg.id;
+    let id2 = msg.id;
     return [
       state.withFields({
         todos: filter(state.todos, (elem) => {
-          return elem.id !== id;
+          return elem.id !== id2;
         })
       }),
       none()
     ];
   } else if (msg instanceof ToggleTodo) {
-    let id = msg.id;
+    let id2 = msg.id;
     return [
       state.withFields({
         todos: map(
           state.todos,
           (elem) => {
-            let $ = elem.id === id;
+            let $ = elem.id === id2;
             if ($) {
               return elem.withFields({
                 status: (() => {
@@ -2514,7 +2523,7 @@ function input_task(val) {
     ])
   );
 }
-function list_item_view(id, task) {
+function list_item_view(id2, task) {
   return div(
     toList([
       class$(
@@ -2528,14 +2537,14 @@ function list_item_view(id, task) {
           return class$("line-through");
         }
       })(),
-      on_click(new ToggleTodo(id))
+      on_click(new ToggleTodo(id2))
     ]),
     toList([
       span(toList([]), toList([text(task.msg)])),
       button(
         toList([
           class$("btn btn-warning btn-square"),
-          on_click(new RemoveTodo(id))
+          on_click(new RemoveTodo(id2))
         ]),
         toList([
           span(
@@ -2554,12 +2563,15 @@ function page_view(state) {
       input_task(state.input),
       hr(toList([])),
       div(
-        toList([]),
-        map_index(
-          state.todos,
-          (index2, elem) => {
-            return list_item_view(index2, elem);
-          }
+        toList([id("todos")]),
+        prepend(
+          script(toList([src("/priv/static/main.mjs")]), ""),
+          map_index(
+            state.todos,
+            (index2, elem) => {
+              return list_item_view(index2, elem);
+            }
+          )
         )
       )
     ])

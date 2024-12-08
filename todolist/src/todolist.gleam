@@ -98,12 +98,12 @@ pub fn page_view(state: AppState) {
   html.div([attribute.class("flex flex-col gap-4 max-w-xl mx-auto")], [
     input_task(state.input),
     html.hr([]),
-    html.div(
-      [],
-      utils.map_index(state.todos, fn(index, elem) {
+    html.div([attribute.id("todos")], [
+      html.script([attribute.src("/priv/static/main.mjs")], ""),
+      ..utils.map_index(state.todos, fn(index, elem) {
         list_item_view(index, elem)
-      }),
-    ),
+      })
+    ]),
   ])
 }
 
